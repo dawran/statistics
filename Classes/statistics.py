@@ -1,13 +1,14 @@
 import math
+import numpy as np
 
 
 class Statistics:
     def __init__(self, dataset):
         self.dataset = dataset
-        self.len = len(self.dataset)
+        self.len = self.dataset.shape
         self.count = self.count_()
         self.total = self.sum()
-        self.mean = round(self.total / self.len, 5)
+        self.mean = round(self.total / self.len[0], 5)
 
         self.q1, self.median, self.q3 = self.quartiles()
         self.mode = self.mode_measure()
@@ -18,32 +19,24 @@ class Statistics:
         self.std = round(math.sqrt(self.variance), 5)
 
     def min_(self):
-        # m = self.dataset[0]
-        # for x in range(1, self.len):
-        #     if self.dataset[x] < m:
-        #         m = x
-
-        return sorted(self.dataset)[0]
+        return np.array(sorted(self.dataset)).T[0]
 
     def max_(self):
-        # m = self.dataset[0]
-        # for x in range(1, self.len):
-        #     if self.dataset[x] > m:
-        #         m = x
-        return sorted(self.dataset)[self.len - 1]
-        #return m
+        return np.array(sorted(self.dataset)).T[self.len - 1]
 
     def count_(self):
-        n = 1
-        while n in range(0, self.len):
-            if self.dataset[n] is not None:
-                n += 1
-        return n
+        total = np.zeros(self.len[1])
+        for n in range(0, self.len[1]):
+            for m in range(0, self.len[0]):
+                if self.dataset[n][m] is not None:
+                    total[n] += 1
+        return total
 
     def sum(self):
-        total = 0
-        for x in self.dataset:
-            total += x
+        total = np.zeros(self.len[1])
+        for n in range(0, self.len[1]):
+            for x in self.dataset[n]:
+                total[n] += x
         return total
 
     def quartiles(self):
